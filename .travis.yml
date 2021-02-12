@@ -2,20 +2,23 @@ dist: xenial
 
 services:
   - postgresql
-addons:
-  postgresql: "9.4"
+env:
+  - POSTGRESQL_VERSION = 9.4
+  - POSTGRESQL_VERSION = 9.6
 before_script:
+  - sudo service postgresql stop && sudo service postgresql start $POSTGRESQL_VERSION
   - psql -U postgres -c "create user decide password 'decide'"
   - psql -U postgres -c "create database test_decide owner decide"
   - psql -U postgres -c "ALTER USER decide CREATEDB"
 language: python
 python:
   - "3.6"
+  - "3.8"
 install:
   - pip install -r requirements.txt
   - pip install codacy-coverage
 script:
   - cd decide
-  - coverage run --branch --source=. ./manage.py test --keepdb --with-xunit
+  - coverage run --branch --source=. ./manage.py test authentication census --keepdb --with-xunit
   - coverage xml
   - python-codacy-coverage -r coverage.xml
