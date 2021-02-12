@@ -5,9 +5,8 @@ services:
 env:
   - POSTGRESQL_VERSION = 9.4
   - POSTGRESQL_VERSION = 9.6
-addons:
-  postgresql: $POSGRESQL_VERSION
 before_script:
+  - sudo service postgresql stop && sudo service postgresql start $POSTGRESQL_VERSION
   - psql -U postgres -c "create user decide password 'decide'"
   - psql -U postgres -c "create database test_decide owner decide"
   - psql -U postgres -c "ALTER USER decide CREATEDB"
